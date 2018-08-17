@@ -1,7 +1,12 @@
 
 # guile-jwt
 
-guile-jwt is a JSON Web Token module for Guile.
+guile-jwt is a JSON Web Token module for Guile. JSON Web Tokens are an open,
+industry standard ([RFC 7519](https://tools.ietf.org/html/rfc7519)) method for
+representing claims securely between two parties. guile-jwt allows you to
+decode, verify and generate JWT.
+
+- Supported algorithms: HS256, HS384, HS512.
 
 # Installation
 
@@ -49,27 +54,27 @@ To start using guile-jwt you simply need to load the module:
 ## Procedures
 
 - (**jwt-encode** payload secret #:key algorithm header) : Creates a new JWT
-  with the given /payload/ and the specified /secret/. Throws
-  /jwt-invalid-algorithm/ if a not supported or invalid algorithm is provided.
+  with the given *payload* and the specified *secret*. Throws
+  *jwt-invalid-algorithm* if a not supported or invalid algorithm is provided.
 
-  - /algorithm/ : symbol specifying signing algorithm. Defaults to HS256.
-  - /header/ : association list with additional header fields.
+  - *algorithm* : symbol specifying signing algorithm. Defaults to HS256.
+  - *header* : association list with additional header fields.
 
   **Returns** : a JWT string.
 
-- (**jwt-decode** jwt secret #:key verify) : Decodes the given JWT /jwt/ with
-  the specified /secret/. The algorithm to verify the signature will be
+- (**jwt-decode** jwt secret #:key verify) : Decodes the given JWT *jwt* with
+  the specified *secret*. The algorithm to verify the signature will be
   extracted from the JWT header.
 
-  - /verify/ : verify JWT signature and fields. Defaults to true.
+  - *verify* : verify JWT signature and fields. Defaults to true.
 
   **Returns** : a hash-table with the payload.
 
   **Throws**
 
-  - /jwt-invalid-algorithm/ : if a not supported or invalid algorithm is found
+  - *jwt-invalid-algorithm* : if a not supported or invalid algorithm is found
     in the header.
-  - /jwt-invalid/ : if the JWT is invalid.
+  - *jwt-invalid* : if the JWT is invalid.
 
 ## Examples
 
