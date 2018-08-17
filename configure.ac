@@ -1,7 +1,7 @@
 #
 # configure.ac
 #
-# Copyright (C) 2013-2018 Aleix Conchillo Flaque <aconchillo@gmail.com>
+# Copyright (C) 2018 Aleix Conchillo Flaque <aconchillo@gmail.com>
 #
 # This file is part of guile-jwt.
 #

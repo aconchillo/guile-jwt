@@ -14,7 +14,9 @@ guile-jwt is freely available for download under the terms of the GNU General
 Public License version 3 (GPLv3) as well as the GNU Lesser General Public
 License version 3 (LGPLv3).
 
-Sorry, no release is available yet.
+Download the latest tarball and untar it:
+
+- [guile-jwt-0.1.0.tar.gz](http://download.savannah.gnu.org/releases/guile-jwt/guile-jwt-0.1.0.tar.gz)
 
 If you are cloning the repository make sure you run this first:
 
@@ -78,14 +80,14 @@ To start using guile-jwt you simply need to load the module:
 
 ## Examples
 
-- Generate a JWT with the default HS256 signing algorithm and given payload:
+- Generate a JWT with the default HS256 algorithm and a given payload:
 
 ```
 scheme@(guile-user)> (jwt-encode '((test . "1234567890")) "secret")
 "...7HFTJOiPGdXmk0G1rqzhpZV_POhjRrTBlR_WOC8-_L0"
 ```
 
-- Generate a JWT with the HS512 signing algorithm and given payload:
+- Generate a JWT with the HS512 algorithm and a given payload:
 
 ```
 scheme@(guile-user)> (jwt-encode '((test . "1234567890")) "secret" #:algorithm 'HS512)
