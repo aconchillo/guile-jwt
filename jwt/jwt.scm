@@ -93,14 +93,14 @@
 (define (jwt-hmac-decode enc-header enc-payload enc-signature secret)
   (let* ((message (string-append enc-header "." enc-payload))
          (bv-header (base64url-decode enc-header))
-         (header (json-string->scm (utf8->string bv-header)))
          (bv-payload (base64url-decode enc-payload))
-         (payload (json-string->scm (utf8->string bv-payload)))
+         (header (json-string->scm (utf8->string bv-header)))
          (algorithm (string->symbol (hash-ref header "alg")))
          (jwt-hmac (or (symbol->jwt-hmac algorithm)
                        (throw 'jwt-invalid-algorithm algorithm))))
     (cond ((jwt-hmac-verify? jwt-hmac message enc-signature secret)
-           payload)
+           ;; Return payload's JSON converted to SCM.
+           (json-string->scm (utf8->string bv-payload)))
           (else (throw 'jwt-invalid-signature)))))
 
 (define* (jwt-encode payload secret #:key (algorithm 'HS256) (header '()))
@@ -113,8 +113,8 @@ provided with #:header."
         (jwt-hmac-encode jwt-hmac header payload secret)
         (throw 'jwt-invalid-algorithm algorithm))))
 
-(define* (jwt-decode encoded secret)
-  (let* ((segments (string-split encoded #\.))
+(define* (jwt-decode jwt secret)
+  (let* ((segments (string-split jwt #\.))
          (enc-header (car segments))
          (enc-payload (cadr segments))
          (enc-signature (caddr segments)))
