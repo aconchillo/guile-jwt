@@ -89,8 +89,8 @@
          (signature (jwt-hmac-sign jwt-hmac message secret)))
     (string-append message "." signature)))
 
-;; TODO(aleix): implement verification
-(define (jwt-hmac-decode enc-header enc-payload enc-signature secret)
+;; TODO(aleix): implement extra checks
+(define (jwt-hmac-decode enc-header enc-payload enc-signature secret verify)
   (let* ((message (string-append enc-header "." enc-payload))
          (bv-header (base64url-decode enc-header))
          (bv-payload (base64url-decode enc-payload))
@@ -98,7 +98,7 @@
          (algorithm (string->symbol (hash-ref header "alg")))
          (jwt-hmac (or (symbol->jwt-hmac algorithm)
                        (throw 'jwt-invalid-algorithm algorithm))))
-    (cond ((jwt-hmac-verify? jwt-hmac message enc-signature secret)
+    (cond ((or (not verify) (jwt-hmac-verify? jwt-hmac message enc-signature secret))
            ;; Return payload's JSON converted to SCM.
            (json-string->scm (utf8->string bv-payload)))
           (else (throw 'jwt-invalid-signature)))))
@@ -107,20 +107,27 @@
   "Creates a new JWT with the given @var{payload} and the specified
 @var{secret}. HS256 is used as the default algorithm but a different one can be
 specified with the #:algorithm key. Also additional header fileds might be
-provided with #:header."
+provided with #:header. If the provided algorithm is not supported a
+@var{jwt-invalid-algorithm} exception is thrown."
   (let ((jwt-hmac (symbol->jwt-hmac algorithm)))
     (if jwt-hmac
         (jwt-hmac-encode jwt-hmac header payload secret)
         (throw 'jwt-invalid-algorithm algorithm))))
 
-(define* (jwt-decode jwt secret)
+(define* (jwt-decode jwt secret #:key (verify #t))
+  "Decodes the given JWT @var{jwt} with the specified @var{secret}. The
+algorithm to verify the signature will be extracted from the JWT header. If the
+algorithm is not supported a @var{jwt-invalid-algorithm} exception will be
+thrown. If the JWT is invalid a @var{jwt-invalid} exception is thrown. By
+default, the signature and JWT fields will be checked unless @var{verify} is set
+to false."
   (let* ((segments (string-split jwt #\.))
          (enc-header (car segments))
          (enc-payload (cadr segments))
          (enc-signature (caddr segments)))
     (cond
      ((= (length segments) 3)
-      (jwt-hmac-decode enc-header enc-payload enc-signature secret))
+      (jwt-hmac-decode enc-header enc-payload enc-signature secret verify))
      (else (throw 'jwt-invalid)))))
 
 ;;; (jwt jwt) ends here
