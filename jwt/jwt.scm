@@ -34,17 +34,7 @@
   #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-9)
   #:export (jwt-encode
-            jwt-record-encode
-            jwt-decode
-            make-jwt
-            jwt-header
-            jwt-payload))
-
-(define-record-type <jwt>
-  (make-jwt header payload)
-  jwt?
-  (header jwt-header)
-  (payload jwt-payload))
+            jwt-decode))
 
 (define-record-type <jwt-hmac>
   (make-jwt-hmac alg func bv)
@@ -54,13 +44,13 @@
   (bv jwt-hmac-bv-func))
 
 (define (base64url-decode str)
-  (base64-decode str base64url-alphabet))
+  (base64-decode str base64url-alphabet #f #f #f))
 
 (define (base64url-encode data)
   (base64-encode data 0 (bytevector-length data) #f #t base64url-alphabet))
 
-(define (base64url-json-encode json-data)
-  (base64url-encode (string->utf8 (scm->json-string json-data))))
+(define (base64url-scm-encode scm-data)
+  (base64url-encode (string->utf8 (scm->json-string scm-data))))
 
 ;; List of algorithms supported by guile-jwt.
 ;; https://tools.ietf.org/html/rfc7518#section-3.1
@@ -71,41 +61,57 @@
     ((HS512) (make-jwt-hmac algorithm hmac-sha-512 sha-512->bytevector))
     (else #f)))
 
-(define (jwt-hmac-encode jwt-hmac jwt secret)
+(define (jwt-message header payload)
+  (let ((enc-header (base64url-scm-encode header))
+        (enc-payload (base64url-scm-encode payload)))
+    (string-append enc-header "." enc-payload)))
+
+(define (jwt-hmac-header jwt-hmac extra-header)
+  `((alg . ,(jwt-hmac-alg jwt-hmac))
+    (typ . JWT)
+    ,@extra-header))
+
+(define (jwt-hmac-sign jwt-hmac message secret)
   (let* ((hmac (jwt-hmac-func jwt-hmac))
          (hmac->bytevector (jwt-hmac-bv-func jwt-hmac))
-         (header (base64url-json-encode `((alg . ,(jwt-hmac-alg jwt-hmac))
-                                          (typ . JWT)
-                                          ,@(jwt-header jwt))))
-         (payload (base64url-json-encode (jwt-payload jwt)))
-         (message (string-append header "." payload))
-         (msg-hmac (hmac (string->utf8 secret) (string->utf8 message))))
-    (string-append message "." (base64url-encode (hmac->bytevector msg-hmac)))))
+         (mac (hmac (string->utf8 secret) (string->utf8 message))))
+    (base64url-encode (hmac->bytevector mac))))
+
+(define (jwt-hmac-verify? jwt-hmac message signature secret)
+  (let* ((hmac (jwt-hmac-func jwt-hmac))
+         (hmac->bytevector (jwt-hmac-bv-func jwt-hmac))
+         (mac (hmac (string->utf8 secret) (string->utf8 message)))
+         (new-signature (base64url-encode (hmac->bytevector mac))))
+    (string=? new-signature signature)))
+
+(define (jwt-hmac-encode jwt-hmac header payload secret)
+  (let* ((message (jwt-message (jwt-hmac-header jwt-hmac header) payload))
+         (signature (jwt-hmac-sign jwt-hmac message secret)))
+    (string-append message "." signature)))
 
 ;; TODO(aleix): implement verification
 (define (jwt-hmac-decode enc-header enc-payload enc-signature secret)
-  (let* ((header (base64url-decode enc-header))
-         (payload (base64url-decode enc-payload))
-         (signature (base64url-decode enc-signature))
-         (jwt (make-jwt (json-string->scm (utf8->string header))
-                        (json-string->scm (utf8->string payload)))))
-    jwt))
-
-(define* (jwt-record-encode jwt secret #:key (algorithm 'HS256))
-  "Creates a new JWT with the given @var{jwt} record and the specified
-@var{secret}. HS256 is used as the default algorithm but a different one can be
-specified with the #:algorithm key."
-  (let ((jwt-hmac (symbol->jwt-hmac algorithm)))
-    (if jwt-hmac
-        (jwt-hmac-encode jwt-hmac jwt secret)
-        (throw 'jwt-invalid-algorithm algorithm))))
+  (let* ((message (string-append enc-header "." enc-payload))
+         (bv-header (base64url-decode enc-header))
+         (header (json-string->scm (utf8->string bv-header)))
+         (bv-payload (base64url-decode enc-payload))
+         (payload (json-string->scm (utf8->string bv-payload)))
+         (algorithm (string->symbol (hash-ref header "alg")))
+         (jwt-hmac (or (symbol->jwt-hmac algorithm)
+                       (throw 'jwt-invalid-algorithm algorithm))))
+    (cond ((jwt-hmac-verify? jwt-hmac message enc-signature secret)
+           payload)
+          (else (throw 'jwt-invalid-signature)))))
 
 (define* (jwt-encode payload secret #:key (algorithm 'HS256) (header '()))
   "Creates a new JWT with the given @var{payload} and the specified
 @var{secret}. HS256 is used as the default algorithm but a different one can be
 specified with the #:algorithm key. Also additional header fileds might be
 provided with #:header."
-  (jwt-record-encode (make-jwt header payload) secret #:algorithm algorithm))
+  (let ((jwt-hmac (symbol->jwt-hmac algorithm)))
+    (if jwt-hmac
+        (jwt-hmac-encode jwt-hmac header payload secret)
+        (throw 'jwt-invalid-algorithm algorithm))))
 
 (define* (jwt-decode encoded secret)
   (let* ((segments (string-split encoded #\.))
