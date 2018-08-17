@@ -64,6 +64,10 @@ To start using guile-jwt you simply need to load the module:
 
   **Returns** : a JWT string.
 
+  **Throws**
+
+  - *jwt-invalid-algorithm* : if a not supported or invalid algorithm is given.
+
 - (**jwt-decode** jwt secret #:key verify) : Decodes the given JWT *jwt* with
   the specified *secret*. The algorithm to verify the signature will be
   extracted from the JWT header.
