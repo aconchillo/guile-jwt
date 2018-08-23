@@ -1,18 +1,15 @@
 
 # guile-jwt
 
-guile-jwt is a JSON Web Token module for Guile. JSON Web Tokens are an open,
-industry standard ([RFC 7519](https://tools.ietf.org/html/rfc7519)) method for
-representing claims securely between two parties. guile-jwt allows you to
-decode, verify and generate JWT.
+guile-jwt is a JSON Web Token module for Guile. JSON Web Tokens are an
+open, industry standard ([RFC
+7519](https://tools.ietf.org/html/rfc7519)) method for representing
+claims securely between two parties. guile-jwt allows you to decode,
+verify and generate JWT.
 
 - Supported algorithms: HS256, HS384, HS512.
 
 # Installation
-
-guile-jwt is freely available for download under the terms of the GNU General
-Public License version 3 (GPLv3) as well as the GNU Lesser General Public
-License version 3 (LGPLv3).
 
 Download the latest tarball and untar it:
 
@@ -28,8 +25,8 @@ Then, run the typical sequence:
     $ make
     $ sudo make install
 
-Where <guile-prefix> should preferably be the same as your system Guile
-installation directory (e.g. /usr).
+Where <guile-prefix> should preferably be the same as your system
+Guile installation directory (e.g. /usr).
 
 If everything installed successfully you should be up and running:
 
@@ -46,8 +43,8 @@ guile-jwt, for example:
 
 # Usage
 
-guile-jwt provides a couple procedures, one to generate a JWT and another to
-verify it.
+guile-jwt provides a couple procedures, one to generate a JWT and
+another to verify it.
 
 To start using guile-jwt you simply need to load the module:
 
@@ -55,22 +52,25 @@ To start using guile-jwt you simply need to load the module:
 
 ## Procedures
 
-- (**jwt-encode** payload secret #:key algorithm header) : Creates a new JWT
-  with the given *payload* and the specified *secret*. Throws
-  *jwt-invalid-algorithm* if a not supported or invalid algorithm is provided.
+- (**jwt-encode** payload secret #:key algorithm header) : Creates a
+  new JWT with the given *payload* and the specified *secret*. Throws
+  *jwt-invalid-algorithm* if a not supported or invalid algorithm is
+  provided.
 
-  - *algorithm* : symbol specifying signing algorithm. Defaults to HS256.
+  - *algorithm* : symbol specifying signing algorithm. Defaults to
+     HS256.
   - *header* : association list with additional header fields.
 
   **Returns** : a JWT string.
 
   **Throws**
 
-  - *jwt-invalid-algorithm* : if a not supported or invalid algorithm is given.
+  - *jwt-invalid-algorithm* : if a not supported or invalid algorithm
+     is given.
 
-- (**jwt-decode** jwt secret #:key verify) : Decodes the given JWT *jwt* with
-  the specified *secret*. The algorithm to verify the signature will be
-  extracted from the JWT header.
+- (**jwt-decode** jwt secret #:key verify) : Decodes the given JWT
+  *jwt* with the specified *secret*. The algorithm to verify the
+  signature will be extracted from the JWT header.
 
   - *verify* : verify JWT signature and fields. Defaults to true.
 
@@ -78,8 +78,8 @@ To start using guile-jwt you simply need to load the module:
 
   **Throws**
 
-  - *jwt-invalid-algorithm* : if a not supported or invalid algorithm is found
-    in the header.
+  - *jwt-invalid-algorithm* : if a not supported or invalid algorithm
+    is found in the header.
   - *jwt-invalid* : if the JWT is invalid.
 
 ## Examples
@@ -113,3 +113,13 @@ scheme@(guile-user)> (define payload (jwt-decode jwt "secret"))
 scheme@(guile-user)> (hash-ref payload "test")
 "1234567890"
 ```
+
+# License
+
+guile-jwt is freely available for download under the terms of the GNU
+General Public License version 3 (GPLv3).
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.  This file is offered as-is,
+without any warranty.
