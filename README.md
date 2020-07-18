@@ -116,7 +116,7 @@ scheme@(guile-user)> (assoc-ref payload "test")
 
 # License
 
-Copyright (C) 2018 Aleix Conchillo Flaque <aconchillo@gmail.com>
+Copyright (C) 2018-2020 Aleix Conchillo Flaque <aconchillo@gmail.com>
 
 guile-jwt is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
