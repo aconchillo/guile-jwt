@@ -22,7 +22,7 @@
 moddir = $(datadir)/guile/site/$(GUILE_EFFECTIVE_VERSION)/jwt
 objdir = $(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache/jwt
 
-SOURCES = jwt.scm
+SOURCES = jwt.scm hmac.scm
 
 GOBJECTS = $(SOURCES:%.scm=%.go)
 

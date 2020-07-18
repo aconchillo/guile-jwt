@@ -37,7 +37,7 @@ If everything installed successfully you should be up and running:
 
     $ guile
     scheme@(guile-user)> (use-modules (jwt))
-    scheme@(guile-user)> (jwt-encode '((test . "1234567890")) "secret"))
+    scheme@(guile-user)> (jwt-encode '((test . "1234567890")) "secret")
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
 It might be that you installed guile-jwt somewhere differently than
