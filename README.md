@@ -74,7 +74,7 @@ To start using guile-jwt you simply need to load the module:
 
   - *verify* : verify JWT signature and fields. Defaults to true.
 
-  **Returns** : a hash-table with the payload.
+  **Returns** : an alist with the payload.
 
   **Throws**
 
@@ -110,7 +110,7 @@ scheme@(guile-user)> (jwt-encode '((test . "1234567890")) "secret" #:header '((f
 ```
 scheme@(guile-user)> (define jwt (jwt-encode '((test . "1234567890")) "secret"))
 scheme@(guile-user)> (define payload (jwt-decode jwt "secret"))
-scheme@(guile-user)> (hash-ref payload "test")
+scheme@(guile-user)> (assoc-ref payload "test")
 "1234567890"
 ```
 

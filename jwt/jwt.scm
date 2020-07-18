@@ -1,6 +1,6 @@
 ;;; (jwt jwt) --- Guile JWT implementation.
 
-;; Copyright (C) 2018 Aleix Conchillo Flaque <aconchillo@gmail.com>
+;; Copyright (C) 2018-2020 Aleix Conchillo Flaque <aconchillo@gmail.com>
 ;;
 ;; This file is part of guile-jwt.
 ;;
@@ -91,7 +91,7 @@
          (bv-header (base64url-decode enc-header))
          (bv-payload (base64url-decode enc-payload))
          (header (json-string->scm (utf8->string bv-header)))
-         (algorithm (string->symbol (hash-ref header "alg")))
+         (algorithm (string->symbol (assoc-ref header "alg")))
          (jwt-hmac (or (symbol->jwt-hmac algorithm)
                        (throw 'jwt-invalid-algorithm algorithm))))
     (cond ((or (not verify) (jwt-hmac-verify? jwt-hmac message enc-signature secret))
