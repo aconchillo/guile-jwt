@@ -1,7 +1,7 @@
 #
 # Makefile.am
 #
-# Copyright (C) 2018 Aleix Conchillo Flaque <aconchillo@gmail.com>
+# Copyright (C) 2018-2020 Aleix Conchillo Flaque <aconchillo@gmail.com>
 #
 # This file is part of guile-jwt.
 #
@@ -28,20 +28,21 @@ PKG_LIST_VERSION=$(shell echo $(PACKAGE_VERSION) | sed "s/\./ /g")
 dist-hook:
 	$(SHELL) $(top_srcdir)/ChangeLog > $(top_distdir)/ChangeLog
 
-moddir = $(datadir)/guile/site/@GUILE_EFFECTIVE_VERSION@
-objdir = $(libdir)/guile/@GUILE_EFFECTIVE_VERSION@/site-ccache
-
-SOURCES = jwt.scm
 GOBJECTS = $(SOURCES:%.scm=%.go)
+
+moddir = $(datadir)/guile/site/$(GUILE_EFFECTIVE_VERSION)
+objdir = $(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache
 
 nobase_mod_DATA = $(SOURCES) $(NOCOMP_SOURCES)
 nobase_nodist_obj_DATA = $(GOBJECTS)
 
-EXTRA_DIST = $(SOURCES) $(NOCOMP_SOURCES)
-
-CLEANFILES = $(GOBJECTS)
-
 GUILE_WARNINGS = -Wunbound-variable -Warity-mismatch -Wformat
 SUFFIXES = .scm .go
 .scm.go:
-	$(top_builddir)/env $(GUILE_TOOLS) compile $(GUILE_WARNINGS) -o "$@" "$<"
+	$(top_builddir)/env $(GUILD) compile $(GUILE_TARGET) $(GUILE_WARNINGS) -o "$@" "$<"
+
+SOURCES = jwt.scm
+
+CLEANFILES = $(GOBJECTS)
+
+EXTRA_DIST = $(SOURCES) $(NOCOMP_SOURCES)
