@@ -19,8 +19,6 @@
 # along with guile-jwt. If not, see https://www.gnu.org/licenses/.
 #
 
-SUBDIRS = hashing industria
-
 moddir = $(datadir)/guile/site/$(GUILE_EFFECTIVE_VERSION)/jwt
 objdir = $(libdir)/guile/$(GUILE_EFFECTIVE_VERSION)/site-ccache/jwt
 

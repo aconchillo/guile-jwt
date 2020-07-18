@@ -24,8 +24,8 @@
 ;;; Code:
 
 (define-module (jwt jwt)
-  #:use-module (jwt hashing sha-2)
-  #:use-module (jwt industria base64)
+  #:use-module (gcrypt base64)
+  #:use-module (gcrypt hmac)
   #:use-module (json)
   #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-9)
@@ -33,11 +33,10 @@
             jwt-decode))
 
 (define-record-type <jwt-hmac>
-  (make-jwt-hmac alg func bv)
+  (make-jwt-hmac alg sha)
   jwt-hmac?
   (alg jwt-hmac-alg)
-  (func jwt-hmac-func)
-  (bv jwt-hmac-bv-func))
+  (sha jwt-hmac-sha))
 
 (define (base64url-decode str)
   (base64-decode str base64url-alphabet #f #f #f))
@@ -52,9 +51,9 @@
 ;; https://tools.ietf.org/html/rfc7518#section-3.1
 (define (symbol->jwt-hmac algorithm)
   (case algorithm
-    ((HS256) (make-jwt-hmac algorithm hmac-sha-256 sha-256->bytevector))
-    ((HS384) (make-jwt-hmac algorithm hmac-sha-384 sha-384->bytevector))
-    ((HS512) (make-jwt-hmac algorithm hmac-sha-512 sha-512->bytevector))
+    ((HS256) (make-jwt-hmac algorithm 'sha256))
+    ((HS384) (make-jwt-hmac algorithm 'sha384))
+    ((HS512) (make-jwt-hmac algorithm 'sha512))
     (else #f)))
 
 (define (jwt-message header payload)
@@ -68,17 +67,10 @@
     ,@extra-header))
 
 (define (jwt-hmac-sign jwt-hmac message secret)
-  (let* ((hmac (jwt-hmac-func jwt-hmac))
-         (hmac->bytevector (jwt-hmac-bv-func jwt-hmac))
-         (mac (hmac (string->utf8 secret) (string->utf8 message))))
-    (base64url-encode (hmac->bytevector mac))))
+  (base64url-encode (sign-data secret message #:algorithm (jwt-hmac-sha jwt-hmac))))
 
 (define (jwt-hmac-verify? jwt-hmac message signature secret)
-  (let* ((hmac (jwt-hmac-func jwt-hmac))
-         (hmac->bytevector (jwt-hmac-bv-func jwt-hmac))
-         (mac (hmac (string->utf8 secret) (string->utf8 message)))
-         (new-signature (base64url-encode (hmac->bytevector mac))))
-    (string=? new-signature signature)))
+  (string=? (jwt-hmac-sign jwt-hmac message secret) signature))
 
 (define (jwt-hmac-encode jwt-hmac header payload secret)
   (let* ((message (jwt-message (jwt-hmac-header jwt-hmac header) payload))

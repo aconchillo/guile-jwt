@@ -9,6 +9,11 @@ verify and generate JWT.
 
 - Supported algorithms: HS256, HS384, HS512.
 
+It depends on the following Guile version and modules:
+
+- Guile >= 2.0.10.
+- Guile-Gcrypt >= ???.
+
 # Installation
 
 Download the latest tarball and untar it:

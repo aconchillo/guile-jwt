@@ -36,6 +36,10 @@ GUILE_PKG([3.0 2.2 2.0])
 GUILE_PROGS
 GUILE_SITE_DIR
 
+GUILE_MODULE_REQUIRED([json])
+GUILE_MODULE_REQUIRED([gcrypt base64])
+GUILE_MODULE_REQUIRED([gcrypt hmac])
+
 dnl Guile prefix and libdir.
 GUILE_PREFIX=`$PKG_CONFIG --print-errors --variable=prefix guile-$GUILE_EFFECTIVE_VERSION`
 GUILE_LIBDIR=`$PKG_CONFIG --print-errors --variable=libdir guile-$GUILE_EFFECTIVE_VERSION`
@@ -47,10 +51,7 @@ if test "$cross_compiling" != no; then
    AC_SUBST([GUILE_TARGET])
 fi
 
-AC_CONFIG_FILES([Makefile
-                 jwt/Makefile
-                 jwt/hashing/Makefile
-                 jwt/industria/Makefile])
+AC_CONFIG_FILES([Makefile jwt/Makefile])
 AC_CONFIG_FILES([env], [chmod +x env])
 
 AC_OUTPUT
