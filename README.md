@@ -13,7 +13,7 @@ verify and generate JWT.
 
 Download the latest tarball and untar it:
 
-- [guile-jwt-0.1.0.tar.gz](http://download.savannah.gnu.org/releases/guile-jwt/guile-jwt-0.1.0.tar.gz)
+- [guile-jwt-0.2.0.tar.gz](http://download.savannah.gnu.org/releases/guile-jwt/guile-jwt-0.2.0.tar.gz)
 
 If you are cloning the repository make sure you run this first:
 

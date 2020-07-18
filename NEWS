@@ -1,4 +1,12 @@
 
+* Version 0.2.0 (Jul 17, 2020)
+
+  - Use alists instead of hash tables since that's what guile-json uses now.
+    (reported by Jacob Reckhard)
+
+  - Support Guile 3.0.
+
+
 * Version 0.1.0 (Aug 17, 2018)
 
-  Initial release.
+  - Initial release.
