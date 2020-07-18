@@ -19,7 +19,7 @@
 # along with guile-jwt. If not, see https://www.gnu.org/licenses/.
 #
 
-SUBDIRS = jwt
+SUBDIRS = jwt tests
 
 ACLOCAL_AMFLAGS = -I build-aux
 

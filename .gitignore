@@ -11,5 +11,7 @@
 Makefile
 Makefile.in
 *.go
+*.log
+*.trs
 
 guile-jwt-*

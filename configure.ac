@@ -51,7 +51,7 @@ if test "$cross_compiling" != no; then
    AC_SUBST([GUILE_TARGET])
 fi
 
-AC_CONFIG_FILES([Makefile jwt/Makefile])
+AC_CONFIG_FILES([Makefile jwt/Makefile tests/Makefile])
 AC_CONFIG_FILES([env], [chmod +x env])
 
 AC_OUTPUT
