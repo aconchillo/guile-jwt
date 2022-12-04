@@ -11,14 +11,15 @@ verify and generate JWT.
 
 It depends on the following Guile version and modules:
 
-- Guile >= 2.0.10.
-- Guile-Gcrypt >= ???.
+- Guile >= 2.0.10
+- guile-gcrypt >= 0.4.0
+- guile-json >= 4.5.0
 
 # Installation
 
 Download the latest tarball and untar it:
 
-- [guile-jwt-0.2.0.tar.gz](http://download.savannah.gnu.org/releases/guile-jwt/guile-jwt-0.2.0.tar.gz)
+- [guile-jwt-0.3.0.tar.gz](http://download.savannah.gnu.org/releases/guile-jwt/guile-jwt-0.3.0.tar.gz)
 
 If you are cloning the repository make sure you run this first:
 
@@ -121,7 +122,7 @@ scheme@(guile-user)> (assoc-ref payload "test")
 
 # License
 
-Copyright (C) 2018-2020 Aleix Conchillo Flaque <aconchillo@gmail.com>
+Copyright (C) 2018-2022 Aleix Conchillo Flaque <aconchillo@gmail.com>
 
 guile-jwt is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
