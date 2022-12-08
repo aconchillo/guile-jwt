@@ -19,7 +19,7 @@ It depends on the following Guile version and modules:
 
 Download the latest tarball and untar it:
 
-- [guile-jwt-0.3.0.tar.gz](http://download.savannah.gnu.org/releases/guile-jwt/guile-jwt-0.3.0.tar.gz)
+- [guile-jwt-0.3.0.tar.gz](https://download.savannah.gnu.org/releases/guile-jwt/guile-jwt-0.3.0.tar.gz)
 
 If you are cloning the repository make sure you run this first:
 
